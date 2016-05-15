@@ -1,5 +1,15 @@
 class MainController < ApplicationController
-  def index
 
+  def index
+    add_email_to_account
+  end
+
+  private
+
+  def add_email_to_account
+    return if @account.email
+    insales_account = InsalesApi::Account.find
+    puts insales_account.email
+    @account.update_attributes(email: insales_account.email)
   end
 end

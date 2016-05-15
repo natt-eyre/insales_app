@@ -16,6 +16,7 @@
             %h1 #{app_name}
           .rightHead
             %p
+              = @account.email
               = link_to "Техподдержка", "http://#{@account.insales_subdomain}/admin/support"
               = image_tag 'techsupport_ico.gif'
               |
