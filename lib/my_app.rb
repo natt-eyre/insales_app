@@ -2,7 +2,8 @@ class MyApp < InsalesApi::App
   class << self
     def install shop, token, insales_id
       shop = self.prepare_domain shop
-      return true if Account.find_by(insales_subdomain: shop)
+      account = Account.find_by(insales_subdomain: shop)
+      account.destroy if account
       Account.new(
         insales_subdomain: shop,
         password:          password_by_token(token),

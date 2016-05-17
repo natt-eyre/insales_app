@@ -1,7 +1,8 @@
 class MainController < ApplicationController
 
   def index
-    add_email_to_account
+    # add_email_to_account
+    @user_email = params[:user_email]
   end
 
   private
