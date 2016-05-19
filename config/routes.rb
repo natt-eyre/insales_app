@@ -11,6 +11,8 @@ InsalesApp::Application.routes.draw do
   get '/uninstall', to: 'insales_app#uninstall', as: :uninstall
   get '/login',     to: 'sessions#new',          as: :login
   get '/main',      to: 'main#index',            as: :main
+  get '/products',  to: 'products#index',        as: :products
+  get '/update_products_list', to: 'products#update_products_list', as: :update_products_list
 
   get ':controller/:action/:id'
   get ':controller/:action/:id.:format'

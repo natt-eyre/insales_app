@@ -32,6 +32,10 @@
             .tabLeftCorner
             .tabContent= link_to app_name, root_path
             .tabRightCorner
+          .Tab
+            .tabLeftCorner
+            .tabContent= link_to "Товары", products_path
+            .tabRightCorner
       .content
         %h1
           = link_to(image_tag('back_ico.png', :style => "margin-bottom:-5px", :alt => "На предыдущую страницу", :title => "На предыдущую страницу"), @back) if @back
