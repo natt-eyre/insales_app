@@ -1,13 +1,14 @@
 class ProductsController < ApplicationController
 
   def index
-    @products = @account.products.all
+    get_products_from_db
   end
   
   def create
-    get_products.each do |p|
-      @account.products.new(
-        archived:                     p.archived, 
+    get_products_from_api.each do |p|
+      destroy_if_already_in_db(p)
+      current_account.products.new(
+        archived:                     p.archived,
         available:                    p.available,
         canonical_url_collection_id:  p.canonical_url_collection_id,
         category_id:                  p.category_id,
@@ -36,16 +37,32 @@ class ProductsController < ApplicationController
     end
     redirect_to products_path
   end
-  
+
   private
-  
-  def get_products
-    updated_since = nil
-    last_id = nil
-    InsalesApi::Product.find_updated_since(updated_since, {from_id: last_id}) {|items| @products = items.elements}
-    @products
+
+  def get_products_from_api
+    InsalesApi::Product.find_updated_since(updated_since, {from_id: last_id}) {|items| @insales_products = items.elements}
+    @insales_products
   end
-  
+
+  def destroy_if_already_in_db(insales_product)
+    if product_in_db = current_account.products.find_by(insales_product_id: insales_product.id)
+      product_in_db.destroy
+    end
+  end
+
+  def updated_since
+    get_products_from_db.first.try(:insales_updated_at)
+  end
+
+  def last_id
+    get_products_from_db.first.try(:id)
+  end
+
+  def get_products_from_db
+    @products ||= current_account.products.order(insales_updated_at: :desc).all
+  end
+
   # def product_params
   #   params.require(:product).permit(:archived, 
   #                                   :available,

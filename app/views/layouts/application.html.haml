@@ -17,7 +17,7 @@
           .rightHead
             %p
               = @user_email
-              = link_to "Техподдержка", "http://#{@account.insales_subdomain}/admin/support"
+              = link_to "Техподдержка", "http://#{current_account.insales_subdomain}/admin/support"
               = image_tag 'techsupport_ico.gif'
               |
               \#{link_to 'Форум', 'http://forum.insales.ru', :target => '_blank'}

@@ -22,11 +22,15 @@ describe MyApp do
       expect(account.insales_id).to        eq(1)
     end
 
-    it 'should return true if app already installed' do
-      expect(MyApp.install(default_account.insales_subdomain, 'token', 1)).to eq(true)
-    end
+    # it 'should return true if app already installed' do
+    #   expect(MyApp.install(default_account.insales_subdomain, 'token', 1)).to eq(true)
+    # end
 
-    it 'should no create new account if app already installed' do
+    # it 'should not create new account if app already installed' do
+    #   expect { MyApp.install(default_account.insales_subdomain, 'token', 1) }.to change(Account, :count).by(0)
+    # end
+
+    it 'should destroy old account if app was installed' do
       expect { MyApp.install(default_account.insales_subdomain, 'token', 1) }.to change(Account, :count).by(0)
     end
   end

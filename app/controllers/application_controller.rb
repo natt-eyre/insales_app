@@ -2,7 +2,8 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  helper :all # include all helpers, all the time
+  helper :all
+  helper_method :current_account # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
   before_filter :authentication, :configure_api
 
@@ -64,5 +65,9 @@ class ApplicationController < ActionController::Base
 
   def current_app
     session[:app]
+  end
+
+  def current_account
+    @account
   end
 end
