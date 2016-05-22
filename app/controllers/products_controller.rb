@@ -3,7 +3,7 @@ class ProductsController < ApplicationController
   def index
     get_products_from_db
   end
-  
+
   def create
     get_products_from_api.each do |p|
       destroy_if_already_in_db(p)
@@ -36,6 +36,12 @@ class ProductsController < ApplicationController
         ).save!
     end
     redirect_to products_path
+  end
+
+  def show
+    @product = current_account.products.find(params[:id])
+    @images = @product.images.map(&:original_url)
+    @variants = @product.variants
   end
 
   private

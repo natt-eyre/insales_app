@@ -1,0 +1,29 @@
+%div
+  %h1= @product.title
+%div
+  = render collection: @images, partial: "image"
+%div
+  %strong Краткое описание
+  %p= @product.short_description
+%div
+  %strong Полное описание
+  %p= @product.description.html_safe
+%div
+  %table
+    %thead
+      %tr
+        %th Название
+        %th Артикул
+        %th Штрих-код
+        %th Цена продажи
+        %th Старая цена
+        %th Цена закупки
+        %th Остаток
+        %th Вес, кг
+    %tbody= render collection: @variants, partial: "variant"
+%div
+  %p= "Товар скрыт: #{ @product.is_hidden? }"
+%div
+  %strong Справочная информация
+  %p= "Дата создания: #{ @product.insales_created_at.to_date.strftime("%d.%m.%y") }"
+  %p= "Дата обновления: #{ @product.insales_updated_at.to_date.strftime("%d.%m.%y") }"
