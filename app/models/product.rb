@@ -12,4 +12,8 @@ class Product < ActiveRecord::Base
   def is_hidden?
     is_hidden ? "Да" : "Нет"
   end
+
+  def to_param
+    insales_product_id.to_s
+  end
 end

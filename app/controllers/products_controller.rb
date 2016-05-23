@@ -39,9 +39,10 @@ class ProductsController < ApplicationController
   end
 
   def show
-    @product = current_account.products.find(params[:id])
+    @product = current_account.products.find_by_insales_product_id(params[:id])
     @images = @product.images.map(&:original_url)
     @variants = @product.variants
+    @insales_product_url = insales_product_url
   end
 
   private
@@ -67,6 +68,10 @@ class ProductsController < ApplicationController
 
   def get_products_from_db
     @products ||= current_account.products.order(insales_updated_at: :desc).all
+  end
+
+  def insales_product_url
+    "http:/#{current_account.insales_subdomain}/admin2/products/#{@product.insales_product_id}"
   end
 
   # def product_params
