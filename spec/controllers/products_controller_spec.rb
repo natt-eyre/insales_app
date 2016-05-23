@@ -54,7 +54,7 @@ describe ProductsController do
       expect(Product.last.account).to eq default_account
     end
     
-    it "replaces products in local db with latest version" do
+    it "updates products in local db with latest version" do
       # product with older insales_updated_at
       default_account.products.new(
         insales_product_id: 1,
