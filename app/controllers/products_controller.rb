@@ -1,4 +1,5 @@
 class ProductsController < ApplicationController
+  before_action :get_product, only: [ :show, :update]
 
   def index
     @products = get_products_from_db
@@ -6,8 +7,8 @@ class ProductsController < ApplicationController
 
   def create
     get_products_from_api.each do |p|
-      if already_in_db(p)
-        update_product(already_in_db(p), p)
+      if product_in_db = already_in_db(p)
+        update_product(product_in_db, p)
       else
         current_account.products.new(
           product_params(p)
@@ -18,10 +19,14 @@ class ProductsController < ApplicationController
   end
   
   def show
-    @product = current_account.products.find_by_insales_product_id(params[:id])
     @images = @product.images.map(&:original_url)
     @variants = @product.variants
     @insales_product_url = insales_product_url
+  end
+
+  def update
+    @product.update_attributes!(product_params(get_product_from_api))
+    redirect_to @product
   end
 
   private
@@ -33,8 +38,12 @@ class ProductsController < ApplicationController
     @insales_products
   end
 
+  def get_product_from_api
+    InsalesApi::Product.find(params[:id])
+  end
+
   def already_in_db(insales_product)
-    @product_in_db ||= current_account.products.find_by(insales_product_id: insales_product.id)
+    @product_in_db = current_account.products.find_by(insales_product_id: insales_product.id)
   end
 
   def update_product(product_in_db, insales_product)
@@ -78,34 +87,8 @@ class ProductsController < ApplicationController
   def insales_product_url
     "http:/#{current_account.insales_subdomain}/admin2/products/#{@product.insales_product_id}"
   end
-
-  # def product_params
-  #   params.require(:product).permit(:archived, 
-  #                                   :available,
-  #                                   :canonical_url_collection_id,
-  #                                   :category_id,
-  #                                   :insales_created_at,
-  #                                   :is_hidden,
-  #                                   :sort_weight,
-  #                                   :unit,
-  #                                   :short_description,
-  #                                   :permalink,
-  #                                   :html_title,
-  #                                   :meta_keywords,
-  #                                   :meta_description,
-  #                                   :currency_code,
-  #                                   :collections_ids,
-  #                                   :images,
-  #                                   :option_names,
-  #                                   :properties,
-  #                                   :characteristics,
-  #                                   :product_field_values,
-  #                                   :variants,
-  #                                   :description,
-  #                                   :title,
-  #                                   :insales_product_id,
-  #                                   :insales_updated_at
-  #                                   )
-  # end
   
+  def get_product
+    @product = current_account.products.find_by_insales_product_id(params[:id])
+  end
 end

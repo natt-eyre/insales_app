@@ -29,3 +29,5 @@
   %p= "Дата обновления: #{ @product.insales_updated_at.to_date.strftime("%d.%m.%y") }"
 %div
   %p= link_to "Карточка товара в бэк-офисе", @insales_product_url
+%div
+  %p= link_to "Обновить товар из Insales", @product, method: :patch

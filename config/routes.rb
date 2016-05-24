@@ -7,7 +7,7 @@ InsalesApp::Application.routes.draw do
     end
   end
   
-  resources :products, only: [:show]
+  resources :products, only: [:show, :update]
 
   get '/install',   to: 'insales_app#install',   as: :install
   get '/uninstall', to: 'insales_app#uninstall', as: :uninstall
