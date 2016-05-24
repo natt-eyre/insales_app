@@ -1,14 +1,54 @@
 class ProductsController < ApplicationController
 
   def index
-    get_products_from_db
+    @products = get_products_from_db
   end
 
   def create
     get_products_from_api.each do |p|
-      destroy_if_already_in_db(p)
-      current_account.products.new(
-        archived:                     p.archived,
+      if already_in_db(p)
+        update_product(already_in_db(p), p)
+      else
+        current_account.products.new(
+          product_params(p)
+        ).save!
+      end
+    end
+    redirect_to products_path
+  end
+  
+  def show
+    @product = current_account.products.find_by_insales_product_id(params[:id])
+    @images = @product.images.map(&:original_url)
+    @variants = @product.variants
+    @insales_product_url = insales_product_url
+  end
+
+  private
+
+  def get_products_from_api
+    InsalesApi::Product.find_updated_since(current_account.updated_since,
+      {from_id: current_account.last_id}) {|items| @insales_products = items.elements}
+    current_account.override_update_time(@insales_products.last)
+    @insales_products
+  end
+
+  def already_in_db(insales_product)
+    @product_in_db ||= current_account.products.find_by(insales_product_id: insales_product.id)
+  end
+
+  def update_product(product_in_db, insales_product)
+      product_in_db.update_attributes!(
+        product_params(insales_product)
+        )
+  end
+
+  def get_products_from_db
+    current_account.products.order(insales_updated_at: :desc).all
+  end
+
+  def product_params(p)
+      {archived:                     p.archived,
         available:                    p.available,
         canonical_url_collection_id:  p.canonical_url_collection_id,
         category_id:                  p.category_id,
@@ -32,42 +72,7 @@ class ProductsController < ApplicationController
         description:                  p.description,
         title:                        p.title,
         insales_product_id:           p.id,
-        insales_updated_at:           p.updated_at
-        ).save!
-    end
-    redirect_to products_path
-  end
-
-  def show
-    @product = current_account.products.find_by_insales_product_id(params[:id])
-    @images = @product.images.map(&:original_url)
-    @variants = @product.variants
-    @insales_product_url = insales_product_url
-  end
-
-  private
-
-  def get_products_from_api
-    InsalesApi::Product.find_updated_since(updated_since, {from_id: last_id}) {|items| @insales_products = items.elements}
-    @insales_products
-  end
-
-  def destroy_if_already_in_db(insales_product)
-    if product_in_db = current_account.products.find_by(insales_product_id: insales_product.id)
-      product_in_db.destroy
-    end
-  end
-
-  def updated_since
-    get_products_from_db.first.try(:insales_updated_at)
-  end
-
-  def last_id
-    get_products_from_db.first.try(:id)
-  end
-
-  def get_products_from_db
-    @products ||= current_account.products.order(insales_updated_at: :desc).all
+        insales_updated_at:           p.updated_at}
   end
 
   def insales_product_url
