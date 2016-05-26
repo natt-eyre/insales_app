@@ -1,5 +1,5 @@
 class ProductsController < ApplicationController
-  before_action :get_product, only: [ :show, :update]
+  before_action :get_product, only: [ :show]
 
   def index
     @products = get_products_from_db
@@ -8,7 +8,7 @@ class ProductsController < ApplicationController
   def create
     get_products_from_api.each do |p|
       if product_in_db = already_in_db(p)
-        update_product(product_in_db, p)
+        update(product_in_db, p)
       else
         current_account.products.new(
           product_params(p)
@@ -23,11 +23,18 @@ class ProductsController < ApplicationController
     @variants = @product.variants
     @insales_product_url = insales_product_url
   end
-
-  def update
-    @product.update_attributes!(product_params(get_product_from_api))
-    redirect_to @product
+  
+  def update(product_in_db, insales_product)
+      product_in_db.update_attributes!(
+        product_params(insales_product)
+        )
+      
   end
+
+  # def update
+  #   @product.update_attributes!(product_params(get_product_from_api))
+  #   redirect_to @product
+  # end
 
   private
 
@@ -43,13 +50,7 @@ class ProductsController < ApplicationController
   end
 
   def already_in_db(insales_product)
-    @product_in_db = current_account.products.find_by(insales_product_id: insales_product.id)
-  end
-
-  def update_product(product_in_db, insales_product)
-      product_in_db.update_attributes!(
-        product_params(insales_product)
-        )
+    current_account.products.find_by(insales_product_id: insales_product.id)
   end
 
   def get_products_from_db
@@ -71,13 +72,6 @@ class ProductsController < ApplicationController
         meta_keywords:                p.meta_keywords,
         meta_description:             p.meta_description,
         currency_code:                p.currency_code,
-        collections_ids:              p.collections_ids,
-        images:                       p.images,
-        option_names:                 p.option_names,
-        properties:                   p.properties,
-        characteristics:              p.characteristics,
-        product_field_values:         p.product_field_values,
-        variants:                     p.variants,
         description:                  p.description,
         title:                        p.title,
         insales_product_id:           p.id,

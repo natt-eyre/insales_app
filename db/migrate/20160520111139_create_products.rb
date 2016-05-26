@@ -15,13 +15,6 @@ class CreateProducts < ActiveRecord::Migration
       t.string  :meta_keywords
       t.text    :meta_description
       t.string  :currency_code
-      t.text    :collections_ids, array: true
-      t.text    :images, array: true
-      t.text    :option_names, array: true
-      t.text    :properties, array: true
-      t.text    :characteristics, array: true
-      t.text    :product_field_values, array: true
-      t.text    :variants, array: true
       t.text    :description
       
       t.string :title
