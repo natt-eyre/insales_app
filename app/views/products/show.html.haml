@@ -19,7 +19,7 @@
         %th Старая цена
         %th Цена закупки
         %th Остаток
-        %th Вес, кг
+        // %th Вес, кг
     %tbody= render collection: @variants, partial: "variant"
 %div
   %p= "Товар скрыт: #{ @product.is_hidden? }"

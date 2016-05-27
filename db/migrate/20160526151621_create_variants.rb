@@ -13,6 +13,7 @@ class CreateVariants < ActiveRecord::Migration
       t.datetime :ins_updated_at
       t.string :title
       t.integer :quantity
+      t.decimal :weight
     end
   end
 end
